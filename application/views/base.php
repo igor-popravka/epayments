@@ -2,10 +2,11 @@
 /**
  * @var array $styles
  * @var array $scripts
+ * @var array $errors
  * @var string $title
  * @var string $navbar
  * @var string $jumbotron
- * @var string $container
+ * @var string $content
  * @var string $footer
  */
 ?>
@@ -39,9 +40,18 @@
     <?php endif; ?>
 
     <!-- Main container -->
-    <?php if (!empty($container)): ?>
-        <?php echo $container; ?>
+    <div class="container">
+    <?php if (!empty($errors)): ?>
+    <div class="row">
+        <pre>
+            <?php echo var_export($errors, true); ?>
+        </pre>
+    </div>
     <?php endif; ?>
+    <?php if (!empty($content)): ?>
+        <?php echo $content; ?>
+    <?php endif; ?>
+    </div>
 </main>
 
 <footer class="container">

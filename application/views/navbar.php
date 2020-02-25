@@ -1,3 +1,4 @@
+<?php /** @var string $username */?>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,12 +30,21 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
         <ul class="navbar-nav ml-5">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Login</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Sign in</a>
-            </li>
+            <?php if(empty($username)): ?>
+                <li class="nav-item active">
+                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'login']); ?>">Login</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'register']); ?>">Sign in</a>
+                </li>
+            <?php else: ?>
+                <li class="nav-item active">
+                    <span class="nav-link"><?php echo $username;  ?></span>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'logout']); ?>">Logout</a>
+                </li>
+            <?php endif; ?>
         </ul>
     </div>
 </nav>

@@ -81,7 +81,7 @@ class Kohana_Kohana_Exception extends Exception {
 	 * @param   Exception  $e
 	 * @return  void
 	 */
-	public static function handler(Exception $e)
+	public static function handler(Throwable $e)
 	{
 		$response = Kohana_Exception::_handler($e);
 
