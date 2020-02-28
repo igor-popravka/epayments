@@ -1,4 +1,4 @@
-<?php /** @var string $username */?>
+<?php /** @var Model_User $user */?>
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,19 +30,19 @@
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
         <ul class="navbar-nav ml-5">
-            <?php if(empty($username)): ?>
+            <?php if(empty($user)): ?>
                 <li class="nav-item active">
-                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'login']); ?>">Login</a>
+                    <a class="nav-link" href="/<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'login']); ?>">Login</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'register']); ?>">Sign in</a>
+                    <a class="nav-link" href="/<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'register']); ?>">Sign in</a>
                 </li>
             <?php else: ?>
                 <li class="nav-item active">
-                    <span class="nav-link"><?php echo $username;  ?></span>
+                    <span class="nav-link"><?php echo $user->get('username');  ?></span>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'logout']); ?>">Logout</a>
+                    <a class="nav-link" href="/<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'logout']); ?>">Logout</a>
                 </li>
             <?php endif; ?>
         </ul>
