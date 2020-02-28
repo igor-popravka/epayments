@@ -11,14 +11,8 @@ abstract class Controller_Base extends Controller_Template {
 
         $this->template->title = 'Test';
         $this->template->errors = [];
-        $this->template->styles = [
-            HTML::style('media/css/bootstrap.min.css'),
-            HTML::style('media/css/style.css'),
-        ];
-        $this->template->scripts = [
-            HTML::script('media/js/jquery-3.4.1.slim.min.js'),
-            HTML::script('media/js/bootstrap.bundle.min.js')
-        ];
+        $this->template->styles = Kohana::$config->load('page._common.styles');
+        $this->template->scripts = Kohana::$config->load('page._common.scripts');
         $this->template->navbar = View::factory('navbar');
 
         if ($user = Auth::instance()->get_user()) {
