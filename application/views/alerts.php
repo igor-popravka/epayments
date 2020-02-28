@@ -1,10 +1,6 @@
+<?php /** @var array $alerts */ ?>
 <div class="container">
-<?php
-/**
- * @var array $alerts
- */
-foreach ($alerts as $alert) {
-    echo HTML::block($alert, ['class' => 'alert alert-danger', 'role' => 'alert']);
-}
-?>
+    <?php foreach ($alerts as $alert) : ?>
+        <?php echo HTML::block($alert, ['class' => 'alert alert-danger', 'role' => 'alert']); ?>
+    <?php endforeach; ?>
 </div>

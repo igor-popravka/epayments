@@ -28,11 +28,13 @@
     <!-- Page menu -->
     <?php echo  $menu; ?>
 
-    <!-- Page alerts -->
-    <?php echo  $alerts; ?>
+    <main role="main">
+        <!-- Page alerts -->
+        <?php echo  $alerts; ?>
 
-    <!-- Page content -->
-    <?php echo  $content; ?>
+        <!-- Page content -->
+        <?php echo  $content; ?>
+    </main>
 <footer class="container">
     <?php echo  $footer; ?>
 </footer>

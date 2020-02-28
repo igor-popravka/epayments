@@ -32,17 +32,17 @@
         <ul class="navbar-nav ml-5">
             <?php if(empty($user)): ?>
                 <li class="nav-item active">
-                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'login']); ?>">Login</a>
+                    <a class="nav-link" href="/<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'login']); ?>">Login</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'register']); ?>">Sign in</a>
+                    <a class="nav-link" href="/<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'register']); ?>">Sign in</a>
                 </li>
             <?php else: ?>
                 <li class="nav-item active">
                     <span class="nav-link"><?php echo $user->get('username');  ?></span>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'logout']); ?>">Logout</a>
+                    <a class="nav-link" href="/<?php echo Route::get('default')->uri(['controller'=> 'auth', 'action'=>'logout']); ?>">Logout</a>
                 </li>
             <?php endif; ?>
         </ul>
