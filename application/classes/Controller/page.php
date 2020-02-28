@@ -1,6 +1,6 @@
 <?php
 
-abstract class Controller_Front extends Controller_App
+abstract class Controller_Page extends Controller_App
 {
     /**
      * @var View page template

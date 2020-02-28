@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Auth extends Controller_Front
+class Controller_Auth extends Controller_Page
 {
     public function action_login()
     {
