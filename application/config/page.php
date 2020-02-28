@@ -11,4 +11,7 @@ return [
             HTML::style('media/css/style.css'),
         ],
     ],
+    'home' => [
+        'menu' => 'menu'
+    ]
 ];
