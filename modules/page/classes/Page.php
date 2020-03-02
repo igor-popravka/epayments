@@ -2,22 +2,49 @@
 
 class Page
 {
+    /**
+     * @var mixed|View
+     */
     protected $_layout;
 
+    /**
+     * @var string|null
+     */
     protected $_title;
 
+    /**
+     * @var mixed|View
+     */
     protected $_menu;
 
+    /**
+     * @var mixed|View
+     */
     protected $_content;
 
+    /**
+     * @var mixed|View
+     */
     protected $_footer;
 
+    /**
+     * @var array
+     */
     protected $_data = [];
 
+    /**
+     * @var array
+     */
     protected $_alerts = [];
 
+    /**
+     * @var array
+     */
     protected $_styles = [];
 
+    /**
+     * @var array
+     */
     protected $_scripts = [];
 
     public function __construct(string $config = null)
@@ -25,8 +52,7 @@ class Page
         $common = Kohana::$config->load('page')->get(true, []);
         $config = Kohana::$config->load('page')->get(strtolower($config), []);
 
-        //todo make custom method 
-        $config = array_merge_recursive($common, $config);
+        $config = Arr::merge($common, $config);
 
         $layout = Arr::get($config, 'layout');
         if (is_string($layout)) {
@@ -35,10 +61,11 @@ class Page
             $this->_layout = $layout;
         }
 
-        $this->_title = Arr::get($config, 'title');
-        $this->_menu = Arr::get($config, 'menu');
-        $this->_content = Arr::get($config, 'content');
-        $this->_footer = Arr::get($config, 'footer');
+        $this->title(Arr::get($config, 'title'));
+        $this->menu(Arr::get($config, 'menu'));
+        $this->content(Arr::get($config, 'content'));
+        $this->footer(Arr::get($config, 'footer'));
+
         $this->_styles = Arr::get($config, 'styles', []);
         $this->_scripts = Arr::get($config, 'scripts', []);
     }
@@ -46,7 +73,7 @@ class Page
     public function title(string $title = null)
     {
         if (is_null($title)) {
-            return $this->_title;
+            return $this->_title ?? '';
         } else {
             $this->_title = $title;
 
@@ -61,7 +88,11 @@ class Page
         } else if ($menu instanceof View) {
             $this->_menu = $menu->render();
         } else if (is_string($menu)) {
-            $this->_menu = View::factory($menu, $data)->render();
+            if ($this->isFile($menu)) {
+                $this->_menu = View::factory($menu, $data)->render();
+            } else {
+                $this->_menu = $menu;
+            }
         }
 
         return $this;
@@ -74,7 +105,11 @@ class Page
         } else if ($content instanceof View) {
             $this->_content = $content->render();
         } else if (is_string($content)) {
-            $this->_content = View::factory($content, $data)->render();
+            if ($this->isFile($content)) {
+                $this->_content = View::factory($content, $data)->render();
+            } else {
+                $this->_content = $content;
+            }
         }
 
         return $this;
@@ -87,7 +122,11 @@ class Page
         } else if ($footer instanceof View) {
             $this->_footer = $footer->render();
         } else if (is_string($footer)) {
-            $this->_footer = View::factory($footer, $data)->render();
+            if ($this->isFile($footer)) {
+                $this->_footer = View::factory($footer, $data)->render();
+            } else {
+                $this->_footer = $footer;
+            }
         }
 
         return $this;
@@ -142,5 +181,10 @@ class Page
     public function render()
     {
         return $this->_layout->set('page', $this)->render();
+    }
+
+    protected function isFile (string $file): bool
+    {
+        return Kohana::find_file('views', $file) !== false;
     }
 }

@@ -1,30 +1,32 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Auth extends Controller_Page
-{
-    public function action_login()
-    {
+class Controller_Auth extends Controller_Page {
+    public function action_login () {
         if ($this->auth->logged_in()) {
             $this->goHome();
         }
 
         if ($this->isSubmit()) {
             $data = Arr::extract($_POST, ['username', 'password', 'remember']);
-            $status = Auth::instance()->login($data['username'], $data['password'], !empty($data['remember']));
+            try {
+                $status = Auth::instance()->login($data['username'], $data['password'], !empty($data['remember']));
 
-            if ($status) {
-                $this->goHome();
-            } else {
-                $this->alerts[] = [Kohana::message('auth/user', 'no_user')];
+                if ($status) {
+                    $this->goHome();
+                } else {
+                    $this->alertError('Wrong username or password');
+                }
+            } catch (\Exception $e) {
+                $this->alertError($e->getMessage());
             }
         }
 
-        $this->content = View::factory('auth/login')
-            ->bind('data', $data);
+        $this->page->content(
+            View::factory('auth/login')->bind('data', $data)
+        );
     }
 
-    public function action_register()
-    {
+    public function action_register () {
         if ($this->isSubmit()) {
             $data = Arr::extract($_POST, ['username', 'password', 'password_confirm', 'email']);
             $users = ORM::factory('user');
@@ -44,23 +46,22 @@ class Controller_Auth extends Controller_Page
                 $this->action_login();
                 $this->goHome();
             } catch (ORM_Validation_Exception $e) {
-                $this->alerts = array_merge($this->alerts, $e->errors('auth'));
+                $this->alertError($e->errors('auth'));
             }
         }
 
-        $this->content = View::factory('auth/register')
-            ->bind('data', $data);
+        $this->page->content(
+            View::factory('auth/register')->bind('data', $data)
+        );
     }
 
-    public function action_logout()
-    {
+    public function action_logout () {
         if ($this->auth->logout()) {
             $this->goHome();
         }
     }
 
-    protected function isSubmit(): bool
-    {
+    protected function isSubmit (): bool {
         return $this->post->rule('submit', 'not_empty')->check();
     }
 }
