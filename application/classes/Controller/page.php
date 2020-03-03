@@ -1,41 +1,16 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 abstract class Controller_Page extends Controller_App
 {
     /**
-     * @var View page template
+     * @var Page
      */
-    public $template = 'page';
-
-    /**
-     * @var string
-     */
-    public $title = 'EPayments';
-
-    /**
-     * @var View controller-generated output
-     */
-    public $content;
+    public $page;
 
     /**
      * @var Validation object of _POST
      */
     public $post;
-
-    /**
-     * @var array
-     */
-    public $alerts;
-
-    /**
-     * @var array
-     */
-    public $styles;
-
-    /**
-     * @var array
-     */
-    public $scripts;
 
     /**
      * Loads the template [View] object.
@@ -46,14 +21,8 @@ abstract class Controller_Page extends Controller_App
 
         View::set_global('user', $this->user);
 
-        // Load the template
-        $this->template = View::factory($this->template);
         $this->post = Validation::factory($_POST);
-
-        $common = Kohana::$config->load('page')->get(true);
-        $this->styles = Arr::get($common, 'styles', []);
-        $this->scripts = Arr::get($common, 'scripts', []);
-        $this->alerts = [];
+        $this->page = new Page($this->request->controller());
     }
 
     /**
@@ -61,26 +30,42 @@ abstract class Controller_Page extends Controller_App
      */
     public function after()
     {
-        $this->template->set(
-            [
-                'title' => $this->title,
-                'menu' => View::factory('menu')->render(),
-                'post' => $this->post,
-                'alerts' => View::factory('alerts', ['alerts' => $this->alerts])->render(),
-                'styles' => View::factory('styles', ['styles' => $this->styles])->render(),
-                'scripts' => View::factory('scripts', ['scripts' => $this->scripts])->render(),
-                'footer' => View::factory('footer')->render(),
-            ]
-        );
-
         if ($this->request->is_initial() && !$this->request->is_ajax()) {
-            $this->template->bind('content', $this->content);
-            $this->response->body($this->template->render());
-        } else {
-            $this->response->body($this->content);
+            $this->response->body($this->page->render());
         }
 
         parent::after();
     }
 
+    public function alertSuccess ($message) {
+        $this->alert($message, 'success');
+    }
+
+    public function alertError ($message) {
+        $this->alert($message, 'danger');
+    }
+
+    public function alertWarning ($message) {
+        $this->alert($message, 'warning');
+    }
+
+    public function alertInfo ($message) {
+        $this->alert($message, 'info');
+    }
+
+    protected function isSubmit (): bool {
+        return $this->post->rule('submit', 'not_empty')->check();
+    }
+
+    private function alert ($message, string $type) {
+        if (is_string($message)) {
+            $message = [$message];
+        } elseif (!is_array($message)) {
+            return;
+        }
+
+        foreach ($message as $value) {
+            $this->page->alert(HTML::block($value, ['class' => 'alert alert-' . $type, 'role' => 'alert']));
+        }
+    }
 }

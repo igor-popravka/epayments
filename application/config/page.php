@@ -2,6 +2,9 @@
 
 return [
     TRUE => [
+        'title' => 'EPayments',
+        'menu' => 'menu',
+        'footer' => 'footer',
         'scripts' => [
             HTML::script('media/js/jquery-3.4.1.slim.min.js'),
             HTML::script('media/js/bootstrap.bundle.min.js'),
@@ -10,5 +13,5 @@ return [
             HTML::style('media/css/bootstrap.min.css'),
             HTML::style('media/css/style.css'),
         ],
-    ],
+    ]
 ];
