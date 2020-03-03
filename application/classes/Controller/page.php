@@ -32,8 +32,6 @@ abstract class Controller_Page extends Controller_App
     {
         if ($this->request->is_initial() && !$this->request->is_ajax()) {
             $this->response->body($this->page->render());
-        } else {
-            $this->response->body($this->page->content());
         }
 
         parent::after();
@@ -53,6 +51,10 @@ abstract class Controller_Page extends Controller_App
 
     public function alertInfo ($message) {
         $this->alert($message, 'info');
+    }
+
+    protected function isSubmit (): bool {
+        return $this->post->rule('submit', 'not_empty')->check();
     }
 
     private function alert ($message, string $type) {

@@ -23,11 +23,13 @@
 
     <main role="main">
         <!-- Page alerts -->
-        <div class="container">
-            <?php foreach ($page->alert() as $alert) : ?>
-                <?php echo $alert; ?>
-            <?php endforeach; ?>
-        </div>
+        <?php if($alerts = $page->alert()): ?>
+            <div class="container mt-3">
+                <?php foreach ($alerts as $alert) : ?>
+                    <?php echo $alert; ?>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Page content -->
         <?php echo  $page->content(); ?>

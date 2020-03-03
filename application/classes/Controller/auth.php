@@ -60,8 +60,4 @@ class Controller_Auth extends Controller_Page {
             $this->goHome();
         }
     }
-
-    protected function isSubmit (): bool {
-        return $this->post->rule('submit', 'not_empty')->check();
-    }
 }
