@@ -1,8 +1,9 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+//todo: add permission
 return [
     TRUE => [
-        'layout' => 'layout',
+        'layout' => NULL,
         'title' => NULL,
         'menu' => NULL,
         'content' => NULL,

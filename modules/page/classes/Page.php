@@ -1,5 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+//todo: use param as diff class Block
 class Page
 {
     /**
@@ -8,7 +9,7 @@ class Page
     protected $_layout;
 
     /**
-     * @var string|null
+     * @var mixed|View
      */
     protected $_title;
 
@@ -54,82 +55,53 @@ class Page
 
         $config = Arr::merge($common, $config);
 
-        $layout = Arr::get($config, 'layout');
-        if (is_string($layout)) {
-            $this->_layout = View::factory($layout);
-        } else if ($layout instanceof View) {
-            $this->_layout = $layout;
-        }
-
+        $this->layout(Arr::get($config, 'layout'));
         $this->title(Arr::get($config, 'title'));
         $this->menu(Arr::get($config, 'menu'));
         $this->content(Arr::get($config, 'content'));
         $this->footer(Arr::get($config, 'footer'));
 
-        $this->_styles = Arr::get($config, 'styles', []);
-        $this->_scripts = Arr::get($config, 'scripts', []);
-    }
+        foreach (Arr::get($config, 'styles', []) as $style){
+            $this->style($style);
+        }
 
-    public function title(string $title = null)
-    {
-        if (is_null($title)) {
-            return $this->_title ?? '';
-        } else {
-            $this->_title = $title;
-
-            return $this;
+        foreach (Arr::get($config, 'scripts', []) as $script){
+            $this->script($script);
         }
     }
 
-    public function menu($menu = null, array $data = null)
+    /**
+     * @param null $view
+     * @param array|null $data
+     * @param bool $render
+     *
+     * @return $this|mixed|View
+     * @throws View_Exception
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
+    public function layout($view = null, array $data = null, bool $render = false)
     {
-        if (is_null($menu)) {
-            return $this->_menu ?? '';
-        } else if ($menu instanceof View) {
-            $this->_menu = $menu->render();
-        } else if (is_string($menu)) {
-            if ($this->isFile($menu)) {
-                $this->_menu = View::factory($menu, $data)->render();
-            } else {
-                $this->_menu = $menu;
-            }
-        }
-
-        return $this;
+        return $this->value($this->_layout, $view, $data, $render);
     }
 
-    public function content($content = null, array $data = null)
+    public function title($view = null, array $data = null, bool $render = true)
     {
-        if (is_null($content)) {
-            return $this->_content ?? '';
-        } else if ($content instanceof View) {
-            $this->_content = $content->render();
-        } else if (is_string($content)) {
-            if ($this->isFile($content)) {
-                $this->_content = View::factory($content, $data)->render();
-            } else {
-                $this->_content = $content;
-            }
-        }
-
-        return $this;
+        return $this->value($this->_title, $view, $data, $render);
     }
 
-    public function footer($footer = null, array $data = null)
+    public function menu($view = null, array $data = null, bool $render = true)
     {
-        if (is_null($footer)) {
-            return $this->_footer ?? '';
-        } else if ($footer instanceof View) {
-            $this->_footer = $footer->render();
-        } else if (is_string($footer)) {
-            if ($this->isFile($footer)) {
-                $this->_footer = View::factory($footer, $data)->render();
-            } else {
-                $this->_footer = $footer;
-            }
-        }
+        return $this->value($this->_menu, $view, $data, $render);
+    }
 
-        return $this;
+    public function content($view = null, array $data = null, bool $render = true)
+    {
+        return $this->value($this->_content, $view, $data, $render);
+    }
+
+    public function footer($view = null, array $data = null, bool $render = true)
+    {
+        return $this->value($this->_footer, $view, $data, $render);
     }
 
     public function data(string $key = null, $value = null)
@@ -139,9 +111,7 @@ class Page
         } else if (is_null($value)) {
             return Arr::get($this->_data, $key);
         } else {
-            $this->_data[$key] = $value;
-
-            return $this;
+            return $this->value($this->_data[$key], $value);
         }
     }
 
@@ -150,9 +120,7 @@ class Page
         if (is_null($text)) {
             return $this->_alerts;
         } else {
-            $this->_alerts[] = $text;
-
-            return $this;
+            return $this->value($this->_alerts[], $text);
         }
     }
 
@@ -161,9 +129,7 @@ class Page
         if (is_null($style)) {
             return $this->_styles;
         } else {
-            $this->_styles[] = $style;
-
-            return $this;
+            return $this->value($this->_styles[], $style);
         }
     }
 
@@ -172,19 +138,61 @@ class Page
         if (is_null($script)) {
             return $this->_scripts;
         } else {
-            $this->_scripts[] = $script;
-
-            return $this;
+            return $this->value($this->_scripts[], $script);
         }
     }
 
     public function render()
     {
-        return $this->_layout->set('page', $this)->render();
+        return $this->layout()
+            ->set('page', $this)
+            ->set($this->data())
+            ->render();
     }
 
-    protected function isFile (string $file): bool
+    protected function isFile(string $file): bool
     {
-        return Kohana::find_file('views', $file) !== false;
+        return !empty(Kohana::find_file('views', $file));
+    }
+
+    /**
+     * Set/Get value the target variable
+     *
+     * @param mixed $target
+     * @param mixed|View $view
+     * @param array|null $data
+     * @param bool $render
+     *
+     * @return $this|mixed|View
+     * @throws View_Exception
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
+    protected function value(&$target, $view = null, array $data = null, bool $render = true)
+    {
+        if (is_array($view)) {
+            extract($view);
+        }
+
+        if (is_null($view)) {
+            return $target ?? '';
+        } else if ($view instanceof View) {
+            $target = $view;
+
+            if ($render) {
+                $target->render();
+            }
+        } else if (is_string($view)) {
+            if ($this->isFile($view)) {
+                $target = View::factory($view, $data);
+
+                if ($render) {
+                    $target->render();
+                }
+            } else {
+                $target = $view;
+            }
+        }
+
+        return $this;
     }
 }
