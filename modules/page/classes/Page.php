@@ -4,27 +4,27 @@
 class Page
 {
     /**
-     * @var mixed|View
+     * @var mixed|Block
      */
     protected $_layout;
 
     /**
-     * @var mixed|View
+     * @var mixed|Block
      */
     protected $_title;
 
     /**
-     * @var mixed|View
+     * @var mixed|Block
      */
     protected $_menu;
 
     /**
-     * @var mixed|View
+     * @var mixed|Block
      */
     protected $_content;
 
     /**
-     * @var mixed|View
+     * @var mixed|Block
      */
     protected $_footer;
 
@@ -61,138 +61,179 @@ class Page
         $this->content(Arr::get($config, 'content'));
         $this->footer(Arr::get($config, 'footer'));
 
-        foreach (Arr::get($config, 'styles', []) as $style){
+        foreach (Arr::get($config, 'styles', []) as $style) {
             $this->style($style);
         }
 
-        foreach (Arr::get($config, 'scripts', []) as $script){
+        foreach (Arr::get($config, 'scripts', []) as $script) {
             $this->script($script);
         }
     }
 
     /**
-     * @param null $view
+     * @param null $content
      * @param array|null $data
-     * @param bool $render
      *
-     * @return $this|mixed|View
-     * @throws View_Exception
+     * @return Block
      * @author Igor Popravka <igor.popravka@tstechpro.com>
      */
-    public function layout($view = null, array $data = null, bool $render = false)
+    public function layout($content = null, array $data = null)
     {
-        return $this->value($this->_layout, $view, $data, $render);
+        return $this->value($this->_layout, $content, $data);
     }
 
-    public function title($view = null, array $data = null, bool $render = true)
+    /**
+     *
+     * @param null $content
+     * @param array|null $data
+     *
+     * @return Block
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
+    public function title($content = null, array $data = null)
     {
-        return $this->value($this->_title, $view, $data, $render);
+        return $this->value($this->_title, $content, $data);
     }
 
-    public function menu($view = null, array $data = null, bool $render = true)
+    /**
+     *
+     * @param null $content
+     * @param array|null $data
+     *
+     * @return Block
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
+    public function menu($content = null, array $data = null)
     {
-        return $this->value($this->_menu, $view, $data, $render);
+        return $this->value($this->_menu, $content, $data);
     }
 
-    public function content($view = null, array $data = null, bool $render = true)
+    /**
+     *
+     * @param null $content
+     * @param array|null $data
+     *
+     * @return Block
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
+    public function content($content = null, array $data = null)
     {
-        return $this->value($this->_content, $view, $data, $render);
+        return $this->value($this->_content, $content, $data);
     }
 
-    public function footer($view = null, array $data = null, bool $render = true)
+    /**
+     *
+     * @param null $content
+     * @param array|null $data
+     *
+     * @return Block
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
+    public function footer($content = null, array $data = null)
     {
-        return $this->value($this->_footer, $view, $data, $render);
+        return $this->value($this->_footer, $content, $data);
     }
 
-    public function data(string $key = null, $value = null)
+    public function set($key, $value = null)
     {
-        if (is_null($key)) {
-            return $this->_data;
-        } else if (is_null($value)) {
-            return Arr::get($this->_data, $key);
+        if (is_array($key) || $key instanceof Traversable) {
+            foreach ($key as $name => $value) {
+                $this->_data[$name] = $value;
+            }
         } else {
-            return $this->value($this->_data[$key], $value);
+            $this->_data[$key] = $value;
         }
+
+        return $this;
     }
 
     public function alert(string $text = null)
     {
         if (is_null($text)) {
             return $this->_alerts;
-        } else {
-            return $this->value($this->_alerts[], $text);
         }
+
+        /**
+         * @var Block $target
+         */
+        $this->value($target, $text);
+        $this->_alerts[] = $target->render();
+
+        return $this;
     }
 
+    /**
+     *
+     * @param string|null $style
+     *
+     * @return $this|array|Block[]
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
     public function style(string $style = null)
     {
         if (is_null($style)) {
             return $this->_styles;
-        } else {
-            return $this->value($this->_styles[], $style);
         }
+
+        /**
+         * @var Block $target
+         */
+        $this->value($target, $style);
+        $this->_styles[] = $target->render();
+
+        return $this;
     }
 
+    /**
+     *
+     * @param string|null $script
+     *
+     * @return $this|array|Block[]
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
     public function script(string $script = null)
     {
         if (is_null($script)) {
             return $this->_scripts;
-        } else {
-            return $this->value($this->_scripts[], $script);
         }
+
+        /**
+         * @var Block $target
+         */
+        $this->value($target, $script);
+        $this->_scripts[] = $target->render();
+
+        return $this;
     }
 
     public function render()
     {
         return $this->layout()
             ->set('page', $this)
-            ->set($this->data())
+            ->set($this->_data)
             ->render();
-    }
-
-    protected function isFile(string $file): bool
-    {
-        return !empty(Kohana::find_file('views', $file));
     }
 
     /**
      * Set/Get value the target variable
      *
      * @param mixed $target
-     * @param mixed|View $view
+     * @param mixed|View $content
      * @param array|null $data
-     * @param bool $render
      *
-     * @return $this|mixed|View
-     * @throws View_Exception
+     * @return Block
      * @author Igor Popravka <igor.popravka@tstechpro.com>
      */
-    protected function value(&$target, $view = null, array $data = null, bool $render = true)
+    protected function value(&$target, $content = null, array $data = null)
     {
-        if (is_array($view)) {
-            extract($view);
+        if (is_array($content)) {
+            extract($content);
         }
 
-        if (is_null($view)) {
-            return $target ?? '';
-        } else if ($view instanceof View) {
-            $target = $view;
-
-            if ($render) {
-                $target->render();
-            }
-        } else if (is_string($view)) {
-            if ($this->isFile($view)) {
-                $target = View::factory($view, $data);
-
-                if ($render) {
-                    $target->render();
-                }
-            } else {
-                $target = $view;
-            }
+        if (!is_null($content)) {
+            $target = new Block($content, $data);
         }
 
-        return $this;
+        return $target;
     }
 }

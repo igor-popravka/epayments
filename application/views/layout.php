@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Test description">
 
-    <title><?php echo $page->title(); ?></title>
+    <title><?php echo $page->title()->render(); ?></title>
 
     <!-- Page styles -->
     <?php foreach ($page->style() as $style) : ?>
@@ -19,7 +19,7 @@
 </head>
 <body>
     <!-- Page menu -->
-    <?php echo  $page->menu(); ?>
+    <?php echo  $page->menu()->render(); ?>
 
     <main role="main">
         <!-- Page alerts -->
@@ -32,10 +32,10 @@
         <?php endif; ?>
 
         <!-- Page content -->
-        <?php echo  $page->content(); ?>
+        <?php echo  $page->content()->render(); ?>
     </main>
 <footer class="container">
-    <?php echo  $page->footer(); ?>
+    <?php echo  $page->footer()->render(); ?>
 </footer>
     <!-- Page scripts -->
     <?php foreach ($page->script() as $script) : ?>

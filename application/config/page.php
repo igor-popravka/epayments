@@ -3,9 +3,7 @@
 return [
     TRUE => [
         'layout' => [
-            'view' => 'layout',
-            'data' => null,
-            'render' => false
+            'content' => 'layout'
         ],
         'title' => 'EPayments',
         'menu' => 'menu',
@@ -21,8 +19,7 @@ return [
     ],
     'dashboard' => [
         'layout' => [
-            'view' => 'dashboard/layout',
-            'render' => false
+            'content' => 'dashboard/layout'
         ],
         'scripts' => [
             HTML::script('media/js/solid-5.0.13.js'),
