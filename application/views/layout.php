@@ -1,5 +1,5 @@
 <?php
-/** @var Html_Page $page */
+/** @var Page $page */
 ?>
 <!DOCTYPE html>
 <html lang="en">

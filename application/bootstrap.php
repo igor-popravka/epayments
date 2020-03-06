@@ -150,6 +150,7 @@ Cookie::$salt = 'cookie_5e4e7308775fe6.19549787';
  */
 Route::set('profile', 'profile(/<controller>(/<action>(/<id>)))')
     ->defaults(array(
+        'directory'  => 'Profile',
         'controller' => 'Dashboard',
         'action'     => 'index',
     ));

@@ -24,16 +24,16 @@ return [
     ],
     'dashboard' => [
         'layout' => [
-            'content' => 'dashboard/layout'
+            'content' => 'profile/layout'
         ],
         'scripts' => [
             HTML::script('media/js/solid-5.0.13.js'),
             HTML::script('media/js/fontawesome-5.0.13.js'),
             HTML::script('media/js/popper-1.14.0.min.js'),
-            HTML::script('media/js/dashboard/script.js'),
+            HTML::script('media/js/profile/script.js'),
         ],
         'styles' => [
-            HTML::style('media/css/dashboard/style.css'),
+            HTML::style('media/css/profile/style.css'),
         ],
     ],
 ];
