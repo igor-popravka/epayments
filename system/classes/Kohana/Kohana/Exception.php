@@ -137,7 +137,7 @@ class Kohana_Kohana_Exception extends Exception {
 	 * @param   int        $level
 	 * @return  void
 	 */
-	public static function log(Exception $e, $level = Log::EMERGENCY)
+	public static function log(Throwable $e, $level = Log::EMERGENCY)
 	{
 		if (is_object(Kohana::$log))
 		{

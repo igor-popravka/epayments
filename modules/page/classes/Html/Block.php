@@ -1,16 +1,11 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-class Block
+class Html_Block extends Html_View
 {
     /**
      * @var string|null
      */
     protected $_content;
-
-    /**
-     * @var array|null
-     */
-    protected $_data;
 
     /**
      * Block constructor.
@@ -27,7 +22,7 @@ class Block
     /**
      * @param mixed|null $content
      *
-     * @return Block|mixed|null
+     * @return Html_Block|mixed|null
      */
     public function content($content = null)
     {
@@ -40,42 +35,24 @@ class Block
         return $this;
     }
 
-    public function set($key, $value = null)
-    {
-        if (is_array($key) || $key instanceof Traversable) {
-            foreach ($key as $name => $value) {
-                $this->_data[$name] = $value;
-            }
-        } else {
-            $this->_data[$key] = $value;
-        }
-
-        return $this;
-    }
-
-    public function render(): string
+    public function render(array $data = []): string
     {
         $content = $this->content();
 
         if ($content instanceof View) {
-            if (!empty($this->_data)) {
-                $content->set($this->_data);
-            }
-
-            return $content->render();
+            return $content
+                ->set($data)
+                ->render();
         } else if (is_string($content) && !empty($content)) {
-            if ($this->isViewFile($content)) {
-                return View::factory($content, $this->_data)->render();
+            if (static::isViewFile($content)) {
+                return View::factory($content, $this->_data)
+                    ->set($data)
+                    ->render();
             } else {
                 return $content;
             }
         }
 
         return '';
-    }
-
-    protected function isViewFile(string $file): bool
-    {
-        return !empty(Kohana::find_file('views', $file));
     }
 }

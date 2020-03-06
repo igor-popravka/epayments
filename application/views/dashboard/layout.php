@@ -1,5 +1,5 @@
 <?php
-/** @var Page $page */
+/** @var Html_Page $page */
 //todo: use base template
 ?>
 <!DOCTYPE html>
@@ -220,14 +220,6 @@
 <?php foreach ($page->script() as $script) : ?>
     <?php echo $script; ?>
 <?php endforeach; ?>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#sidebarCollapse').on('click', function() {
-            $('#sidebar').toggleClass('active');
-        });
-    });
-</script>
 </body>
 
 </html>

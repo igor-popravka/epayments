@@ -5,6 +5,11 @@ return [
         'layout' => [
             'content' => 'layout'
         ],
+        'blocks' => [
+            'title' => 'EPayments',
+            'menu' => 'menu',
+            'footer' => 'footer',
+        ],
         'title' => 'EPayments',
         'menu' => 'menu',
         'footer' => 'footer',
@@ -25,9 +30,10 @@ return [
             HTML::script('media/js/solid-5.0.13.js'),
             HTML::script('media/js/fontawesome-5.0.13.js'),
             HTML::script('media/js/popper-1.14.0.min.js'),
+            HTML::script('media/js/dashboard/script.js'),
         ],
         'styles' => [
-            HTML::style('media/css/style2.css'),
+            HTML::style('media/css/dashboard/style.css'),
         ],
     ],
 ];

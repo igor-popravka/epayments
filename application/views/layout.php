@@ -1,5 +1,5 @@
 <?php
-/** @var Page $page */
+/** @var Html_Page $page */
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Test description">
 
-    <title><?php echo $page->title()->render(); ?></title>
+    <title><?php echo $page->title(); ?></title>
 
     <!-- Page styles -->
     <?php foreach ($page->style() as $style) : ?>
@@ -19,7 +19,7 @@
 </head>
 <body>
     <!-- Page menu -->
-    <?php echo  $page->menu()->render(); ?>
+    <?php echo  $page->menu(); ?>
 
     <main role="main">
         <!-- Page alerts -->
@@ -32,10 +32,10 @@
         <?php endif; ?>
 
         <!-- Page content -->
-        <?php echo  $page->content()->render(); ?>
+        <?php echo  $page->content(); ?>
     </main>
 <footer class="container">
-    <?php echo  $page->footer()->render(); ?>
+    <?php echo  $page->footer(); ?>
 </footer>
     <!-- Page scripts -->
     <?php foreach ($page->script() as $script) : ?>
