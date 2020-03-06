@@ -1,6 +1,15 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
-class Html_Block extends Html_View
+namespace Page;
+
+use View as BaseView;
+
+/**
+ * Class Block
+ *
+ * @author Igor Popravka <igor.popravka@tstechpro.com>
+ */
+class Block extends View
 {
     /**
      * @var string|null
@@ -10,7 +19,7 @@ class Html_Block extends Html_View
     /**
      * Block constructor.
      *
-     * @param string|null $content
+     * @param mixed $content
      * @param array|null $data
      */
     public function __construct($content = null, array $data = null)
@@ -20,9 +29,11 @@ class Html_Block extends Html_View
     }
 
     /**
-     * @param mixed|null $content
+     * Get/Set block content
      *
-     * @return Html_Block|mixed|null
+     * @param mixed $content
+     *
+     * @return Block|BaseView|null
      */
     public function content($content = null)
     {
@@ -35,17 +46,26 @@ class Html_Block extends Html_View
         return $this;
     }
 
+    /**
+     * Render block content with data
+     *
+     * @param array $data
+     *
+     * @return string
+     * @throws \View_Exception
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
     public function render(array $data = []): string
     {
         $content = $this->content();
 
-        if ($content instanceof View) {
+        if ($content instanceof BaseView) {
             return $content
                 ->set($data)
                 ->render();
         } else if (is_string($content) && !empty($content)) {
             if (static::isViewFile($content)) {
-                return View::factory($content, $this->_data)
+                return BaseView::factory($content, $this->_data)
                     ->set($data)
                     ->render();
             } else {

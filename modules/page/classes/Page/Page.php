@@ -1,14 +1,19 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+namespace Page;
+
+use Arr;
+use Kohana;
 
 /**
  * Class Html_Page
  *
  * @author Igor Popravka <igor.popravka@tstechpro.com>
  */
-class Html_Page extends Html_View
+class Page extends View
 {
     /**
-     * @var mixed|Html_Block
+     * @var mixed|Block
      */
     protected $_layout;
 
@@ -38,7 +43,7 @@ class Html_Page extends Html_View
     protected $_scripts = [];
 
     /**
-     * Html_Page constructor.
+     * Page constructor.
      *
      * @param string|null $config
      */
@@ -62,24 +67,27 @@ class Html_Page extends Html_View
     }
 
     /**
+     * Create/Get/Set page layout
+     *
      * @param null $content
      * @param array|null $data
      *
-     * @return Html_View
+     * @return View
      * @author Igor Popravka <igor.popravka@tstechpro.com>
      */
     public function layout($content = null, array $data = null)
     {
-        return static::htmlBlock($this->_layout, $content, $data);
+        return static::view($this->_layout, $content, $data);
     }
 
     /**
+     * Create/Get/Set page block
      *
      * @param string $name
      * @param null $content
      * @param array|null $data
      *
-     * @return Html_View
+     * @return Block|View
      * @author Igor Popravka <igor.popravka@tstechpro.com>
      */
     public function block(string $name, $content = null, array $data = null)
@@ -88,10 +96,11 @@ class Html_Page extends Html_View
             $this->_blocks[$name] = null;
         }
 
-        return static::htmlBlock($this->_blocks[$name], $content, $data);
+        return static::view($this->_blocks[$name], $content, $data);
     }
 
     /**
+     * Add/Get page alert(s)
      *
      * @param string|null $message
      *
@@ -104,12 +113,13 @@ class Html_Page extends Html_View
             return $this->_alerts;
         }
 
-        $this->_alerts[] = static::htmlBlock($_, $message)->render();
+        $this->_alerts[] = static::view($_, $message)->render();
 
         return $this;
     }
 
     /**
+     * Add/Get page style(s)
      *
      * @param string|null $style
      *
@@ -122,12 +132,13 @@ class Html_Page extends Html_View
             return $this->_styles;
         }
 
-        $this->_styles[] = static::htmlBlock($_, $style)->render();
+        $this->_styles[] = static::view($_, $style)->render();
 
         return $this;
     }
 
     /**
+     * Add/Get page script(s)
      *
      * @param string|null $script
      *
@@ -140,11 +151,19 @@ class Html_Page extends Html_View
             return $this->_scripts;
         }
 
-        $this->_scripts[] = static::htmlBlock($_, $script)->render();
+        $this->_scripts[] = static::view($_, $script)->render();
 
         return $this;
     }
 
+    /**
+     * Render the page layout
+     *
+     * @param array $data
+     *
+     * @return string
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
     public function render(array $data = []): string
     {
         return $this->layout()
@@ -154,28 +173,37 @@ class Html_Page extends Html_View
     }
 
     /**
-     * Set/Get value the target variable
+     * Create/Set/Get page view
      *
      * @param mixed $target
-     * @param mixed|Html_View $content
+     * @param mixed|View $content
      * @param array|null $data
      *
-     * @return Html_View
+     * @return View
      * @author Igor Popravka <igor.popravka@tstechpro.com>
      */
-    protected static function htmlBlock(&$target, $content = null, array $data = null): Html_View
+    protected static function view(&$target, $content = null, array $data = null): View
     {
         if (is_array($content)) {
             extract($content);
         }
 
-        if (!($target instanceof Html_Block) || !is_null($content)) {
-            $target = new Html_Block($content, $data);
+        if (!($target instanceof View) || !is_null($content)) {
+            $target = new Block($content, $data);
         }
 
         return $target;
     }
 
+    /**
+     * Load/Get page config
+     *
+     * @param string|null $key
+     *
+     * @return array
+     * @throws \Kohana_Exception
+     * @author Igor Popravka <igor.popravka@tstechpro.com>
+     */
     protected static function config(string $key = null): array
     {
         $page = Kohana::$config->load('page');

@@ -1,6 +1,13 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
 
-abstract class Html_View
+namespace Page;
+
+/**
+ * Class View
+ *
+ * @author Igor Popravka <igor.popravka@tstechpro.com>
+ */
+abstract class View
 {
     /**
      * @var array|null
@@ -28,7 +35,7 @@ abstract class Html_View
      */
     public function set($key, $value = null)
     {
-        if (is_array($key) || $key instanceof Traversable) {
+        if (is_array($key) || $key instanceof \Traversable) {
             foreach ($key as $name => $value) {
                 $this->_data[$name] = $value;
             }
@@ -74,6 +81,6 @@ abstract class Html_View
      */
     public static function isViewFile(string $file): bool
     {
-        return !empty(Kohana::find_file('views', $file));
+        return !empty(\Kohana::find_file('views', $file));
     }
 }
