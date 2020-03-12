@@ -148,8 +148,17 @@ Cookie::$salt = 'cookie_5e4e7308775fe6.19549787';
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
+Route::set('profile', 'profile(/<controller>(/<action>(/<id>)))')
+    ->defaults(array(
+        'directory'  => 'Profile',
+        'controller' => 'Dashboard',
+        'action'     => 'index',
+    ));
+
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'Home',
 		'action'     => 'index',
 	));
+
+Route::cache(false);
