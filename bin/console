@@ -1,0 +1,17 @@
+<?php
+
+require_once './vendor/autoload.php';
+require_once './common.php';
+
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Application;
+use Migration\Command\MigrateCommand;
+
+set_time_limit(0);
+
+$input = new ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], getenv('APP_ENV') ?: 'dev', true);
+$app = new Application();
+//$app->add(new MigrateCommand());
+
+$app->run($input);
